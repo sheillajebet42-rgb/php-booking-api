@@ -1,0 +1,13 @@
+services:
+  db:
+    image: mysql:8
+    environment: { MYSQL_ROOT_PASSWORD: pass, MYSQL_DATABASE: booking }
+    healthcheck: { test: ["CMD", "mysqladmin", "ping", "-ppass"], interval: 5s, retries: 10 }
+  app:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      DB_DSN: "mysql:host=db;dbname=booking;charset=utf8mb4"
+      DB_USER: root
+      DB_PASS: pass
+    depends_on: { db: { condition: service_healthy } }
